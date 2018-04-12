@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.a54545.phpconnectnew.UserActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/title_home"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteY="4dp"
+        tools:layout_editor_absoluteX="24dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/framelayout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp" />
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/navigation"
+        tools:layout_editor_absoluteY="455dp"
+        tools:layout_editor_absoluteX="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="0dp"
+        android:layout_height="272dp"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="56dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="56dp"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/test"
+        tools:layout_editor_absoluteY="337dp"
+        tools:layout_editor_absoluteX="0dp"
+        app:layout_constraintStart_toStartOf="@+id/navigation"
+        android:layout_marginTop="9dp"
+        app:layout_constraintTop_toBottomOf="@+id/framelayout"
+        app:layout_constraintBottom_toTopOf="@+id/navigation" />
+</android.support.constraint.ConstraintLayout>

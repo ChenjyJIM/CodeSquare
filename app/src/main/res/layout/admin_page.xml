@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:text="Welcome"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="查看订单" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+
+        android:text="查看销售额" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="384dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="查看会员信息" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="384dp"
+        android:layout_height="62dp"
+        android:layout_gravity="center"
+        android:text="店铺数据分析" />
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:text="管理我的店铺" />
+
+</LinearLayout>

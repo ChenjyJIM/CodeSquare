@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView7new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="    您好！Jim \n\n   住址：   浙江省杭州市"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="TextView"
+        android:textSize="20dp"
+        android:gravity="center_vertical"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="75dp">
+
+        <TextView
+            android:id="@+id/textView3new"
+            android:layout_width="199dp"
+            android:layout_height="match_parent"
+            android:text="余额：550"
+            android:textSize="20dp"
+            android:background="@drawable/textview_border"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/textView4new"
+            android:layout_width="221dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_border"
+            android:gravity="center"
+            android:text="查看我的订单"
+            android:textSize="20dp"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView6new"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="点击设置个人信息"
+        android:textSize="20dp"
+        android:background="@drawable/textview_border"
+        android:gravity="center"/>
+
+
+</LinearLayout>
