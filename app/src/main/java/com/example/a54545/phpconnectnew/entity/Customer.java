@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.entity;
 
 /**
  * Created by 54545 on 2018/3/28.
@@ -6,7 +6,9 @@ package com.example.a54545.phpconnectnew;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
+/**
+ *   顾客信息实体类
+ */
 public class Customer implements Serializable{
     private int id;
     private String name;

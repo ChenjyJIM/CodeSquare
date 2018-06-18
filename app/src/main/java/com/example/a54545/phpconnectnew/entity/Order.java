@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.entity;
 
 import java.io.Serializable;
 
@@ -6,6 +6,9 @@ import java.io.Serializable;
  * Created by 54545 on 2018/bench/25.
  */
 
+/**
+ * 订单实体类
+ */
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;

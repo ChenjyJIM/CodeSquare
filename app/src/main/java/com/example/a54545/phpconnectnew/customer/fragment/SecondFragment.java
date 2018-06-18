@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.customer.fragment;
 
 
 import android.content.Context;
@@ -10,20 +10,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.entity.Order;
+import com.example.a54545.phpconnectnew.transaction.transaction;
+
 import java.util.ArrayList;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
+
+/**
+ * 用户入口：订单界面fragment实现体
+ */
+
 public class SecondFragment extends Fragment {
     private ArrayList<Order> ordershow=new ArrayList<Order>();
     private TextView tv1,tv2,tv3,tv4,tv5,tv6;
     public SecondFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,7 +42,7 @@ public class SecondFragment extends Fragment {
         tv4=(TextView)view.findViewById(R.id.textView14new);
         tv5=(TextView)view.findViewById(R.id.textView15new);
         tv6=(TextView)view.findViewById(R.id.textView30);
-        ArrayList<TextView> tv=new ArrayList<TextView>();
+        ArrayList<TextView> tv=new ArrayList<>();
         tv.add(tv1);
         tv.add(tv2);
         tv.add(tv3);
@@ -48,8 +55,8 @@ public class SecondFragment extends Fragment {
             tv.get(i).setText("       "+ordershow.get(i).getPname()
                     +"     "+ordershow.get(i).getNumber()
                     +"       "+ordershow.get(i).getTotalprice()
-            +"     "+ordershow.get(i).getTime().substring(0,10)
-            +"        已支付");
+                    +"     "+ordershow.get(i).getTime().substring(0,10)
+                    +"        已支付");
         }
 
         return view;

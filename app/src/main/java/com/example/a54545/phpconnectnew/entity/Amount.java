@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.entity;
 
 import java.io.Serializable;
 
@@ -6,7 +6,9 @@ import java.io.Serializable;
  * Created by 54545 on 2018/3/28.
  */
 
-
+/**
+ * 用于计算产品总价的实体类
+ */
 public class Amount implements Serializable{
     private String P_name;
     private int P_price;

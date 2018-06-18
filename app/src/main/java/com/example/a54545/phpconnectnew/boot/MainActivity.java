@@ -1,6 +1,5 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.boot;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +12,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.admin.AdminActivity;
+import com.example.a54545.phpconnectnew.admin.DataActivity1;
+import com.example.a54545.phpconnectnew.customer.RegisterActivity;
+import com.example.a54545.phpconnectnew.customer.UserActivity;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,40 +26,35 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * APP开启界面，分为用户入口与商家入口，由不同远程服务器中的php文件来对输入参数进行校验。
+ */
 public class MainActivity extends AppCompatActivity {
     int id=100;
-    String username,password;
     String account,loginword;
     String type;
     String test;
     boolean isSuccess=false;
-    //private String strResult="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(" ");
-        //new Thread(new RequestThread()).start();
-        //点击按钮更新TextView的内容
-         final TextView tv = (TextView) findViewById(R.id.tv);
         final  EditText e1=(EditText)findViewById(R.id.editText);
         final EditText e2=(EditText)findViewById(R.id.editText2);
-       // final TextView show=(TextView)findViewById(R.id.textView3);
         Spinner sp = (Spinner) findViewById(R.id.sp);
         Button b1 = (Button) findViewById(R.id.button);
-        List<String> list=new ArrayList<String >();
+        List<String> list=new ArrayList<>();
         list.add("商家入口");
         list.add("用户入口");
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,list);//为下拉框添加适配器
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,list);//为下拉框添加适配器
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -64,15 +64,20 @@ public class MainActivity extends AppCompatActivity {
                 type=adapter.getItem(position);
             }
             //没有选中时的处理
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent){}
+        });
+        TextView register=(TextView)findViewById(R.id.register);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_register=new Intent(MainActivity.this,RegisterActivity.class);
+                startActivity(intent_register);
             }
         });
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 account=e1.getText().toString();
                 loginword=e2.getText().toString();
-//                tv.setText(String.valueOf(id)+username+"\n"+password);
             if(type.equals("商家入口"))
             {
                 new Thread(new RequestThread_admin()).start();
@@ -81,25 +86,19 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //show.setText("成功与否:"+isSuccess);
                 if(isSuccess)
                 {
-                    Intent intent=new Intent(MainActivity.this,AdminActivity.class);
+                    Intent intent=new Intent(MainActivity.this,DataActivity1.class);
                     Bundle bundle=new Bundle();
-                  //  String str=txt.getText().toString();
                     bundle.putString("account",account);
                     bundle.putString("test",test);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 if(!isSuccess)
-                {
-                    Toast.makeText(MainActivity.this, "账号或密码错误，请重新输入" +".....", Toast.LENGTH_LONG).show();
-                } //弹出式的提示框
-
+                {Toast.makeText(MainActivity.this, "账号或密码错误，请重新输入" +".....", Toast.LENGTH_LONG).show();}
             }
             else if(type.equals("用户入口"))
-
             {
                 new Thread(new RequestThread_user()).start();
                 try {
@@ -111,16 +110,12 @@ public class MainActivity extends AppCompatActivity {
                 {
                     Intent intent=new Intent(MainActivity.this,UserActivity.class);
                     Bundle bundle=new Bundle();
-                    //  String str=txt.getText().toString();
                     bundle.putString("account",account);
-
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 if(!isSuccess)
-                {
-                    Toast.makeText(MainActivity.this, "账号或密码错误，请重新输入" +".....", Toast.LENGTH_LONG).show();
-                } //弹出式的提示框
+                {Toast.makeText(MainActivity.this, "账号或密码错误，请重新输入" +".....", Toast.LENGTH_LONG).show();}
             }
             else Toast.makeText(MainActivity.this, "账号或密码错误，请重新输入" +".....", Toast.LENGTH_LONG).show(); //弹出式的提示框
             }
@@ -152,20 +147,12 @@ public class MainActivity extends AppCompatActivity {
                         builder.append(s);
                     }
                     System.out.println(builder.toString());
-                    //得到Json对象
                     JSONObject jsonObject   = new JSONObject(builder.toString());
-                    //通过得到键值对的方式得到值
-//                    id = jsonObject.getInt("user_id");
-//                    username = jsonObject.getString("user_name");
-//                    password = jsonObject.getString("password");
                     isSuccess=jsonObject.getBoolean("isSuccess");
                     test=jsonObject.getString("test");
                     //在线程中判断是否得到成功从服务器得到数据
                 }
-                else
-                {
-                    id=0;
-                }
+                else {id=0;}
             } catch (Exception e)
             {
                 e.printStackTrace();
@@ -191,28 +178,14 @@ public class MainActivity extends AppCompatActivity {
                 {
                     StringBuilder builder = new StringBuilder();
                     //将得到的数据进行解析
-                    BufferedReader buffer = new BufferedReader(
-                            new InputStreamReader(response.getEntity().getContent()));
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                     for(String s =buffer.readLine(); s!= null; s = buffer.readLine())
                     {
                         builder.append(s);
                     }
                     System.out.println(builder.toString());
-                    //得到Json对象
-
-//                    JSONArray jsonArray=new JSONArray(builder.toString());
-//                  for(int i=0;i<jsonArray.length();i++)
-//                  {
-//                      JSONObject jsonObject=jsonArray.getJSONObject(i);
-//                      isSuccess=jsonObject.getBoolean("isSuccess");
-//                  }
                   JSONObject jsonObject=new JSONObject(builder.toString());
                     isSuccess=jsonObject.getBoolean("isSuccess");
-                    //通过得到键值对的方式得到值
-//                    id = jsonObject.getInt("user_id");
-//                    username = jsonObject.getString("user_name");
-//                    password = jsonObject.getString("password");
-
                     //在线程中判断是否得到成功从服务器得到数据
                 }
             } catch (Exception e)

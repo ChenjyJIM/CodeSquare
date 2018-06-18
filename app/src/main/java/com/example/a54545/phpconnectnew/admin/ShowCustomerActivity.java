@@ -1,12 +1,16 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.admin;
 
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
 
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.widget.TextView;
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.entity.Customer;
 
+/**
+ * 商家入口：显示用户（详细信息）
+ */
 public class ShowCustomerActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

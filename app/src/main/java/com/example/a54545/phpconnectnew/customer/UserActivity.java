@@ -1,18 +1,31 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.customer;
 
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.LruCache;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.entity.Customer;
+import com.example.a54545.phpconnectnew.entity.Order;
+import com.example.a54545.phpconnectnew.entity.Product;
+import com.example.a54545.phpconnectnew.customer.fragment.FirstFragment;
+import com.example.a54545.phpconnectnew.customer.fragment.SecondFragment;
+import com.example.a54545.phpconnectnew.customer.fragment.ThirdFragment;
+import com.example.a54545.phpconnectnew.transaction.transaction;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,13 +39,18 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity implements View.OnClickListener ,transaction{
-
+/**
+ * 用户入口：主界面，主activity包含三个fragment
+ */
+public class UserActivity extends AppCompatActivity implements View.OnClickListener ,transaction {
     private int num=0;
     private Customer customer;
     private TextView mTextMessage;
@@ -42,10 +60,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private FrameLayout framelayout;
     private Fragment mFragmentOne;
     private Fragment mFragmentTwo, mFragmentThree,fragmentNow;
-    private Bundle bundle2;
     private String username;
-    private ArrayList<Order> ordershow=new ArrayList<Order>();
-    private ArrayList<Product>productlist=new ArrayList<Product>();
+    private ArrayList<Order> ordershow=new ArrayList<>();
+    private ArrayList<Product>productlist=new ArrayList<>();
+    private LruCache<String,Bitmap> imageCache;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -73,7 +91,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.navigation_dashboard:
                     FragmentTransaction fragmentTransaction3 = mFragmentManager.beginTransaction();
                     mTextMessage.setText("我的订单");
-                    img.setImageResource(R.drawable.guess);
+                    setImage(img,username);
                     if (mFragmentTwo.isAdded()) {
                         fragmentTransaction3.hide(fragmentNow).show(mFragmentTwo);
                     } else {
@@ -100,7 +118,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,14 +127,35 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         name=(TextView)findViewById(R.id.textView7new);
         img=(ImageView)findViewById(R.id.imageView4);
         customer=new Customer();
-
+        int maxMemory = (int) Runtime.getRuntime().maxMemory();
+        int cacheSize = maxMemory / 8;
+        imageCache=new LruCache<>(cacheSize);
         initView();
         initDefaultFragment();
         Bundle bundle1=this.getIntent().getExtras();
-         username=bundle1.getString("account");
+        username=bundle1.getString("account");
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        img.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction fragmentTransaction3 = mFragmentManager.beginTransaction();
+                if (mFragmentOne.isAdded()) {
+                    //如果fragmentOne已经存在，则隐藏当前的fragment，
+                    //然后显示fragmentOne（不会重新初始化，只是加载之前隐藏的fragment）
+                    fragmentTransaction3.hide(fragmentNow).show(mFragmentOne);
+                } else {
+                    //如果fragmentOne不存在，则隐藏当前的fragment，
+                    //然后添加fragmentOne（此时是初始化）
+                    fragmentTransaction3.hide(fragmentNow).add(R.id.framelayout, mFragmentOne);
+                    fragmentTransaction3.addToBackStack(null);
+                }
+                fragmentNow = mFragmentOne;
+                fragmentTransaction3.commit();
+            }
+        });
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         new Thread(new RequestThread_customer()).start();
         new Thread(new RequestThread_order()).start();
         new Thread(new RequestThread_product()).start();
@@ -126,26 +164,17 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
-
-
-
     }
-
     private void initDefaultFragment() {
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        //add：往碎片集合中添加一个碎片；
+        //add：往碎片集合中添加一个碎片；（碎片即fragment）
         //replace：移除之前所有的碎片，替换新的碎片（remove和add的集合体）(很少用，不推荐，因为是重新加载，所以消耗流量)
         //参数：1.公共父容器的的id  2.fragment的碎片
         fragmentTransaction.add(R.id.framelayout, mFragmentOne);
         fragmentTransaction.addToBackStack(null);
-
-        //提交事务
         fragmentTransaction.commit();
         fragmentNow = mFragmentOne;
     }
-
     private void initView() {
         framelayout = (FrameLayout) findViewById(R.id.framelayout);
         //实例化FragmentOne
@@ -157,10 +186,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Override
     public void onClick(View view) {
-
-
     }
-
+    //这些接口用于给fragment使用，可以调用get方法来得到数据。
     @Override
     public String getAccount() {
         return username;
@@ -181,7 +208,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         return productlist;
     }
 
-
     private class RequestThread_customer implements Runnable {
         @SuppressWarnings("unchecked")
         public void run()  {
@@ -190,7 +216,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 5000); //设置读取超时
             String validateUrl = "http://139.224.135.139:81/user/getuserinform.php"; //这里是你与服务器交互的地址
             HttpPost httpRequst = new HttpPost(validateUrl);
-            List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>(); //准备传输的数据
+            List<BasicNameValuePair> params = new ArrayList<>(); //准备传输的数据
             params.add(new BasicNameValuePair("user", username));
             try
             {
@@ -201,14 +227,12 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                     StringBuilder builder = new StringBuilder();
                     //将得到的数据进行解析
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
                     for(String s =buffer.readLine(); s!= null; s = buffer.readLine())
                     {
                         builder.append(s);
                     }
                     System.out.println(builder.toString());
-                    //得到Json对象
-                    JSONObject jsonObject   = new JSONObject(builder.toString());
+                    JSONObject jsonObject= new JSONObject(builder.toString());
                     customer.setId(jsonObject.getInt("id"));
                     customer.setName(jsonObject.getString("name"));
                     customer.setAddress(jsonObject.getString("address"));
@@ -216,7 +240,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                     customer.setCash(new BigDecimal(jsonObject.getDouble("cash")));
                     customer.setPhone(jsonObject.getString("phone"));
                     customer.setSex(jsonObject.getString("sex"));
-                    //在线程中判断是否得到成功从服务器得到数据
                 }
             } catch (Exception e)
             {
@@ -232,7 +255,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 5000); //设置读取超时
             String validateUrl = "http://139.224.135.139:81/user/getuserorderinform.php"; //这里是你与服务器交互的地址
             HttpPost httpRequst = new HttpPost(validateUrl);
-            List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>(); //准备传输的数据
+            List<BasicNameValuePair> params = new ArrayList<>(); //准备传输的数据
             params.add(new BasicNameValuePair("user", username));
             try
             {
@@ -241,59 +264,17 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 if(response.getStatusLine().getStatusCode() == 200)//返回值如果为200的话则证明成功的得到了数据
                 {
                     StringBuilder builder = new StringBuilder();
-                    //将得到的数据进行解析
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
                     for(String s =buffer.readLine(); s!= null; s = buffer.readLine())
                     {
                         builder.append(s);
                     }
                     System.out.println(builder.toString());
-                    //得到Json对象
                     JSONArray jsonArray=new JSONArray(builder.toString());
-                    // JSONObject jsonObject[]=new JSONObject[jsonArray.length()];
-
-//                   //  JSONObject jsonObject2 = (JSONObject)jsonArray.opt(i);
                     num=jsonArray.length();
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         JSONObject jsonObject=jsonArray.getJSONObject(i);
-//                             switch (i) {
-//                                 case 0:
-//                                     ordershow1.setId(jsonObject.getInt("id"));
-//                                     ordershow1.setName(jsonObject.getString("name"));
-//                                     ordershow1.setPhone(jsonObject.getString("phone"));
-//                                     ordershow1.setAddress(jsonObject.getString("address"));
-//                                     ordershow1.setPname(jsonObject.getString("pname"));
-//                                     ordershow1.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow1.setNumber(jsonObject.getInt("number"));
-//                                     ordershow1.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow1.setTime(jsonObject.getString("time"));
-//                                     break;
-//                                 case 1:
-//                                     ordershow2.setId(jsonObject.getInt("id"));
-//                                     ordershow2.setName(jsonObject.getString("name"));
-//                                     ordershow2.setPhone(jsonObject.getString("phone"));
-//                                     ordershow2.setAddress(jsonObject.getString("address"));
-//                                     ordershow2.setPname(jsonObject.getString("pname"));
-//                                     ordershow2.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow2.setNumber(jsonObject.getInt("number"));
-//                                     ordershow2.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow2.setTime(jsonObject.getString("time"));
-//                                     break;
-//                                 case 2:
-//                                     ordershow3.setId(jsonObject.getInt("id"));
-//                                     ordershow3.setName(jsonObject.getString("name"));
-//                                     ordershow3.setPhone(jsonObject.getString("phone"));
-//                                     ordershow3.setAddress(jsonObject.getString("address"));
-//                                     ordershow3.setPname(jsonObject.getString("pname"));
-//                                     ordershow3.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow3.setNumber(jsonObject.getInt("number"));
-//                                     ordershow3.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow3.setTime(jsonObject.getString("time"));
-//                                     break;
-//
-//                             }
                         Order order=new Order();
                         order.setId(jsonObject.getInt("id"));
                         order.setName(jsonObject.getString("name"));
@@ -306,7 +287,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                         order.setTime(jsonObject.getString("time"));
                         ordershow.add(order);
                     }
-                    //在线程中判断是否得到成功从服务器得到数据
                 }
             } catch (Exception e)
             {
@@ -322,18 +302,17 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 5000); //设置读取超时
             String validateUrl = "http://139.224.135.139:81/user/getproductinform.php"; //这里是你与服务器交互的地址
             HttpPost httpRequst = new HttpPost(validateUrl);
-            List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>(); //准备传输的数据
+            List<BasicNameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("user", username));
             try
             {
-                httpRequst.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));//发送请求
-                HttpResponse response = httpClient.execute(httpRequst);  //得到响应
-                if(response.getStatusLine().getStatusCode() == 200)//返回值如果为200的话则证明成功的得到了数据
+                httpRequst.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+                HttpResponse response = httpClient.execute(httpRequst);
+                if(response.getStatusLine().getStatusCode() == 200)
                 {
                     StringBuilder builder = new StringBuilder();
                     //将得到的数据进行解析
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
                     for(String s =buffer.readLine(); s!= null; s = buffer.readLine())
                     {
                         builder.append(s);
@@ -341,63 +320,68 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                     System.out.println(builder.toString());
                     //得到Json对象
                     JSONArray jsonArray=new JSONArray(builder.toString());
-                    // JSONObject jsonObject[]=new JSONObject[jsonArray.length()];
-
-//                   //  JSONObject jsonObject2 = (JSONObject)jsonArray.opt(i);
                     num=jsonArray.length();
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         JSONObject jsonObject=jsonArray.getJSONObject(i);
-//                             switch (i) {
-//                                 case 0:
-//                                     ordershow1.setId(jsonObject.getInt("id"));
-//                                     ordershow1.setName(jsonObject.getString("name"));
-//                                     ordershow1.setPhone(jsonObject.getString("phone"));
-//                                     ordershow1.setAddress(jsonObject.getString("address"));
-//                                     ordershow1.setPname(jsonObject.getString("pname"));
-//                                     ordershow1.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow1.setNumber(jsonObject.getInt("number"));
-//                                     ordershow1.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow1.setTime(jsonObject.getString("time"));
-//                                     break;
-//                                 case 1:
-//                                     ordershow2.setId(jsonObject.getInt("id"));
-//                                     ordershow2.setName(jsonObject.getString("name"));
-//                                     ordershow2.setPhone(jsonObject.getString("phone"));
-//                                     ordershow2.setAddress(jsonObject.getString("address"));
-//                                     ordershow2.setPname(jsonObject.getString("pname"));
-//                                     ordershow2.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow2.setNumber(jsonObject.getInt("number"));
-//                                     ordershow2.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow2.setTime(jsonObject.getString("time"));
-//                                     break;
-//                                 case 2:
-//                                     ordershow3.setId(jsonObject.getInt("id"));
-//                                     ordershow3.setName(jsonObject.getString("name"));
-//                                     ordershow3.setPhone(jsonObject.getString("phone"));
-//                                     ordershow3.setAddress(jsonObject.getString("address"));
-//                                     ordershow3.setPname(jsonObject.getString("pname"));
-//                                     ordershow3.setPrice(jsonObject.getDouble("price"));
-//                                     ordershow3.setNumber(jsonObject.getInt("number"));
-//                                     ordershow3.setTotalprice(jsonObject.getDouble("totalprice"));
-//                                     ordershow3.setTime(jsonObject.getString("time"));
-//                                     break;
-//
-//                             }
-                       Product product=new Product();
+                        Product product=new Product();
                         product.setId(jsonObject.getInt("id"));
-                       product.setName(jsonObject.getString("name"));
-                       product.setPrice(jsonObject.getDouble("price"));
-                       product.setDescription(jsonObject.getString("description"));
+                        product.setName(jsonObject.getString("name"));
+                        product.setPrice(jsonObject.getDouble("price"));
+                        product.setDescription(jsonObject.getString("description"));
                         productlist.add(product);
                     }
-                    //在线程中判断是否得到成功从服务器得到数据
                 }
             } catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setImage(final ImageView imageView,String username){
+        final String user=username;//服务器图片名称，可以设置为用户名
+        //创建Handler更新UI
+        final Handler handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bitmap bitmap=(Bitmap)msg.obj;
+                imageView.setImageBitmap(bitmap);
+            }
+        };
+
+
+        if(imageCache.get(user)==null){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String urlString="http://139.224.135.139:81/images/"+user+".png";
+                    try{
+                        URL url=new URL(urlString);
+                        HttpURLConnection connection=(HttpURLConnection)url.openConnection();
+                        if(connection.getResponseCode()==200){
+                            InputStream inputStream=connection.getInputStream();
+                            Bitmap bitmap= BitmapFactory.decodeStream(inputStream);
+                            Message message=new Message();
+                            message.obj=bitmap;
+                            imageCache.put(user,bitmap);
+                            handler.sendMessage(message);
+                        }
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+        else{
+            Message message=new Message();
+            message.obj=imageCache.get(user);
+            handler.sendMessage(message);
+        }
+
+
     }
 
 

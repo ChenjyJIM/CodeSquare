@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.customer.fragment;
 
 
 import android.content.Context;
@@ -11,11 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.entity.Customer;
+import com.example.a54545.phpconnectnew.entity.Order;
+import com.example.a54545.phpconnectnew.transaction.transaction;
+
 import java.util.ArrayList;
 
 
 /**
  * A simple {@link Fragment} subclass.
+ */
+
+/**
+ * 用户入口：个人界面fragment实现体
  */
 public class ThirdFragment extends Fragment {
     private TextView balance,address;
@@ -39,7 +48,7 @@ public class ThirdFragment extends Fragment {
         ordershow=(TextView)view.findViewById(R.id.textView4new);
         ordershow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), test.class);
+                Intent intent = new Intent(getActivity(), SecondFragment.class);
                 Bundle bundle=new Bundle();
                 int num=orderlist.size();
                 String key[]=new String[num];

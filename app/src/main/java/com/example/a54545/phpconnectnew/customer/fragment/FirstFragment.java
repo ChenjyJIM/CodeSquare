@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.customer.fragment;
 
 
 import android.content.Context;
@@ -12,24 +12,28 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.admin.ShowProduct;
+import com.example.a54545.phpconnectnew.entity.Product;
+import com.example.a54545.phpconnectnew.transaction.transaction;
+
 import java.util.ArrayList;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
+
+/**
+ * 用户入口：会员首页fragment碎片实现体
+ */
 public class FirstFragment extends Fragment {
-
-
     private Button btn1,btn2,btn3;
     private String account;
     private TextView tv1,tv2,tv3;
-    private ArrayList<Product> productArrayList=new ArrayList<Product>();
+    private ArrayList<Product> productArrayList=new ArrayList<>();
     public FirstFragment() {
-        // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,7 +51,7 @@ public class FirstFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ShowProduct.class);
                 Bundle bundle=new Bundle();
                 bundle.putString("account",account);
-                    bundle.putSerializable("product",productArrayList.get(0));
+                bundle.putSerializable("product",productArrayList.get(0));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

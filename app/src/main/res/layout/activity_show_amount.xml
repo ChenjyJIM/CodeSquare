@@ -29,6 +29,7 @@
         <ListView
             android:id="@+id/amountlist"
             android:layout_width="373dp"
-            android:layout_height="488dp"></ListView>
+            android:layout_height="350dp"></ListView>
     </LinearLayout>
+    <include layout="@layout/bottom_menu"/>
 </LinearLayout>

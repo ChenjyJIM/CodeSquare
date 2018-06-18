@@ -11,27 +11,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".boot.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdminActivity" />
-        <activity android:name=".OrderShow" />
-        <activity android:name=".OrderActivity" />
-        <activity android:name=".DataActivity" />
-        <activity android:name=".ShowCustomerActivity" />
-        <activity android:name=".ShowAmountActivity" />
-        <activity android:name=".CustomerActivity" />
+        <activity android:name=".boot.MainActivity" />
+        <activity android:name=".admin.AdminActivity" />
+        <activity android:name=".admin.OrderShow" />
+        <activity android:name=".admin.OrderActivity" />
+        <activity android:name=".admin.DataActivity" />
+        <activity android:name=".admin.DataActivity1" />
+        <activity android:name=".admin.ShowCustomerActivity" />
+        <activity android:name=".admin.ShowAmountActivity" />
+        <activity android:name=".admin.CustomerActivity" />
         <activity
-            android:name=".UserActivity"
+            android:name=".customer.UserActivity"
             android:label="@string/title_activity_user"
             android:theme="@style/AppTheme" />
-        <activity android:name=".test" />
-        <activity android:name=".ShowProduct" />
-        <activity android:name=".WifiActivity"></activity>
+        <activity android:name=".admin.ShowProduct" />
+        <activity android:name=".admin.WifiActivity" />
+        <activity android:name=".customer.RegisterActivity" />
+        <activity android:name=".customer.RegisterActivity"></activity>
     </application>
 
 </manifest>

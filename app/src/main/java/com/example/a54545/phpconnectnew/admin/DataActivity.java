@@ -1,4 +1,4 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.admin;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +8,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.example.a54545.phpconnectnew.R;
+
+/**
+ * 商家入口：店铺数据分析界面，使用手势操作滑动来改变图片。
+ */
 public class DataActivity extends AppCompatActivity {
     private ImageView imageView;
     private Button btn1;
@@ -31,10 +35,6 @@ public class DataActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
-
         gestureDetector = new GestureDetector(onGestureListener);   //设置手势监听由onGestureListener处理
     }
     public boolean onTouchEvent(MotionEvent event){
@@ -55,7 +55,6 @@ public class DataActivity extends AppCompatActivity {
                 count--;
                 count=(count+(resId.length-1))%(resId.length-1);
             }
-
             imageView.setImageResource(resId[count]);  //切换imageView的图片
             return true;
         }

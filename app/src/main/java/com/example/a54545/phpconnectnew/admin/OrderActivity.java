@@ -1,9 +1,15 @@
-package com.example.a54545.phpconnectnew;
+package com.example.a54545.phpconnectnew.admin;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.a54545.phpconnectnew.R;
+import com.example.a54545.phpconnectnew.entity.Order;
+
+/**
+ * 商家入口：显示订单（详细情况）
+ */
 public class OrderActivity extends AppCompatActivity {
     private TextView textView;
     @Override
@@ -11,7 +17,7 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_page);
         textView=(TextView)findViewById(R.id.textView11);
-        Order order=new Order();
+        Order order;
         Bundle bundle2=this.getIntent().getExtras();
         order=(Order) bundle2.getSerializable("order");
         textView.setText("订单编号:"+order.getId()+"\n"

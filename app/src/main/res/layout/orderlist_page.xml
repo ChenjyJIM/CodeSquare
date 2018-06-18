@@ -68,5 +68,5 @@
         android:layout_height="50dp"
         android:text="TextView"
         android:clickable="true"/>
-
+    <include layout="@layout/bottom_menu"/>
 </LinearLayout>
