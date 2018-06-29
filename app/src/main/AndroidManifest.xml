@@ -33,7 +33,6 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".admin.ShowProduct" />
         <activity android:name=".admin.WifiActivity" />
-        <activity android:name=".customer.RegisterActivity" />
         <activity android:name=".customer.RegisterActivity"></activity>
     </application>
 
